@@ -1,0 +1,31 @@
+version: '3.4'
+
+services: 
+
+  hotelroomdb:
+    image: microsoft/mssql-server-windows-developer
+    container_name: mssql-hotelroom
+    ports:
+      - "1533:1433"  
+    environment:
+      - sa_password=India@2017
+      - ACCEPT_EULA=Y
+      - attach_dbs=[{'dbName':'daypilot','dbFiles':['C:\\temp\\daypilot.mdf','C:\\temp\\daypilot_log.ldf']}]
+    volumes:
+      - C:/temp/:C:/temp/
+  
+  musicstore-app:
+    image: devopsguru/hotelroomapps
+    build:
+      context: .\src\hotelroom
+      dockerfile: Dockerfile
+    container_name: hotelroom
+    ports:
+      - 80:80
+    depends_on:
+      - hotelroomdb      
+
+networks:
+  default:
+    external:
+      name: nat
